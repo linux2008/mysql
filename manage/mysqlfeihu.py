@@ -155,15 +155,23 @@ def runSQL(name):
     cur=connMysql(name)
     cur.execute(sql)
 
-def changeMaster(name,host,port,user,password,logfile,logpos):
-    sql=""" change master to
-            master_host='%s',
-            master_port=%s,
-            master_user='%s',
-            master_password='%s',
-            master_log_file='%s',
-            master_log_pos='%s'
-         """ %(host,port,user,password,logfile,logpos)
+def changeMaster(name,host,port,user,password,logfile=None,logpos=None):
+    if logfile is None:
+        sql=""" change master to
+                master_host='%s',
+                master_port=%s,
+                master_user='%s',
+                master_password='%s',
+             """ %(host,port,user,password)
+    else:
+        sql=""" change master to
+                master_host='%s',
+                master_port=%s,
+                master_user='%s',
+                master_password='%s',
+                master_log_file='%s',
+                master_log_pos='%s'
+             """ %(host,port,user,password,logfile,logpos)
     cur=connMysql(name)
     cur.execute(sql)
 
