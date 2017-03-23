@@ -20,6 +20,8 @@ MYSQL_CONF_DIR='/var/mysqlmanager/conf'
 MYSQL_BACK_DIR='/var/mysqlmanager/back'
 replication_user='repl'
 replication_pass='123456'
+SHOWSLAVE_USER='showslave'
+SHOWSLAVE_PASS='123qwe'
 
 def opt():
     parser=OptionParser()
@@ -119,6 +121,11 @@ def connMysql(name):
         cur=conn.cursor()
         return cur
 
+
+
+
+
+
 def getMyVariables(cur):
     sql='show global variables;'
     cur.execute(sql)
@@ -155,6 +162,12 @@ def runSQL(name):
     cur=connMysql(name)
     cur.execute(sql)
 
+def show slave(name):
+    sql='grant replication client on *.* to '%s'@'%%' identified by '%s' %(SHOWSLAVE_USER,SHOWSLAVE_PASS)
+    cur=connMysql(name)
+    cur.execute(sql)
+
+
 def changeMaster(name,host,port,user,password):
     sql=""" change master to
             master_host='%s',
@@ -168,7 +181,7 @@ def changeMaster(name,host,port,user,password):
 def backupMysql(name):
     import datetime
     now=datetime.datetime.now()
-    ts=now.strftime('%F-%m-%d %H:%M:%S')
+    ts=now.strftime('%F-%m-%d.%H:%M:%S')
     sqlfile=os.path.join(MYSQL_BACK_DIR,name,'%s.sql' %ts)
     dir=os.path.dirname(sqlfile)
     if not os.path.exists(dir):
@@ -210,7 +223,7 @@ if __name__=='__main__':
                 user=replication_user
                 password=replication_pass
                 changeMaster(instance_name,host,port,user,password)
-
+                showslave(instance_name)
     elif instance_cmd=='check':
         diffMyVariables(instance_name)
     elif instance_cmd=='adjust':
