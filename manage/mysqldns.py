@@ -54,8 +54,10 @@ conf={
       }
 
 def checkSlaveStatus(host,port):
+    user='root'
+    passwd='123qew'
     try:
-        conn=MySQLdb.connect(host=host,port=port,user='root',connect_timeout=2)
+        conn=MySQLdb.connect(host=host,port=port,user=user,passwd=passwd,connect_timeout=2)
     except Exception,e:
         print e
         return False
